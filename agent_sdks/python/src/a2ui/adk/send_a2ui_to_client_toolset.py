@@ -46,7 +46,7 @@ Usage Examples:
     async def check_enabled(ctx: ReadonlyContext) -> bool:
       return await some_condition(ctx)
 
-    async def get_catalog(ctx: ReadonlyContext) -> A2uiCatalog:
+    async def get_catalog(ctx: ReadonlyContext) -> catalog.A2uiCatalog:
       return await fetch_catalog(ctx)
 
     async def get_examples(ctx: ReadonlyContext) -> str:
@@ -88,9 +88,19 @@ from typing import (
     Union,
 )
 
+import jsonschema
+
+from a2a import types as a2a_types
+from a2ui.a2a import parts
+from a2ui.parser.parser import has_a2ui_parts
 from a2ui.adk.a2a.event_converter import A2uiEventConverter
 from a2ui.adk.a2a.part_converter import A2uiPartConverter
 from a2ui.parser.payload_fixer import parse_and_fix
+from a2ui.schema import catalog
+from a2ui.schema import constants
+from google.adk import models
+from google.adk.a2a.converters import part_converter
+from google.adk.agents import readonly_context
 from a2ui.schema.catalog import A2uiCatalog
 from a2ui.schema.constants import (
     A2UI_SCHEMA_BLOCK_END,
@@ -102,8 +112,8 @@ from a2ui.schema.constants import (
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.models import LlmRequest
 from google.adk.tools import base_toolset
-from google.adk.tools.base_tool import BaseTool
-from google.adk.tools.tool_context import ToolContext
+from google.adk.tools import base_tool
+from google.adk.tools import tool_context
 from google.adk.utils.feature_decorator import experimental
 from google.genai import types as genai_types
 
@@ -114,13 +124,14 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 A2uiEnabledProvider: TypeAlias = Callable[
-    [ReadonlyContext], Union[bool, Awaitable[bool]]
+    [readonly_context.ReadonlyContext], Union[bool, Awaitable[bool]]
 ]
 A2uiCatalogProvider: TypeAlias = Callable[
-    [ReadonlyContext], Union[A2uiCatalog, Awaitable[A2uiCatalog]]
+    [readonly_context.ReadonlyContext],
+    Union[catalog.A2uiCatalog, Awaitable[catalog.A2uiCatalog]],
 ]
 A2uiExamplesProvider: TypeAlias = Callable[
-    [ReadonlyContext], Union[str, Awaitable[str]]
+    [readonly_context.ReadonlyContext], Union[str, Awaitable[str]]
 ]
 
 
@@ -131,14 +142,14 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
   def __init__(
       self,
       a2ui_enabled: Union[bool, A2uiEnabledProvider],
-      a2ui_catalog: Union[A2uiCatalog, A2uiCatalogProvider],
+      a2ui_catalog: Union[catalog.A2uiCatalog, A2uiCatalogProvider],
       a2ui_examples: Union[str, A2uiExamplesProvider],
   ):
     super().__init__()
     self._a2ui_enabled = a2ui_enabled
     self._ui_tools = [self._SendA2uiJsonToClientTool(a2ui_catalog, a2ui_examples)]
 
-  async def _resolve_a2ui_enabled(self, ctx: ReadonlyContext) -> bool:
+  async def _resolve_a2ui_enabled(self, ctx: readonly_context.ReadonlyContext) -> bool:
     """The resolved self.a2ui_enabled field to construct instruction for this agent.
 
     Args:
@@ -157,8 +168,8 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
 
   async def get_tools(
       self,
-      readonly_context: Optional[ReadonlyContext] = None,
-  ) -> list[BaseTool]:
+      readonly_context: Optional[readonly_context.ReadonlyContext] = None,
+  ) -> list[base_tool.BaseTool]:
     """Returns the list of tools provided by this toolset.
 
     Args:
@@ -177,11 +188,13 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
       logger.info("A2UI is DISABLED, not adding ui tools")
       return []
 
-  async def get_part_converter(self, ctx: ReadonlyContext) -> "A2uiPartConverter":
+  async def get_part_converter(
+      self, ctx: readonly_context.ReadonlyContext
+  ) -> "A2uiPartConverter":
     """Returns a configured A2uiPartConverter for the given context.
 
     Args:
-        ctx: The ReadonlyContext to resolve the catalog with.
+        ctx: The readonly_context.ReadonlyContext to resolve the catalog with.
 
     Returns:
         A configured A2uiPartConverter.
@@ -189,7 +202,7 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
     catalog = await self._ui_tools[0]._resolve_a2ui_catalog(ctx)
     return A2uiPartConverter(catalog)
 
-  class _SendA2uiJsonToClientTool(BaseTool):
+  class _SendA2uiJsonToClientTool(base_tool.BaseTool):
     TOOL_NAME = A2UI_TOOL_NAME
     VALIDATED_A2UI_JSON_KEY = A2UI_VALIDATED_JSON_KEY
     A2UI_JSON_ARG_NAME = "a2ui_json"
@@ -197,7 +210,7 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
 
     def __init__(
         self,
-        a2ui_catalog: Union[A2uiCatalog, A2uiCatalogProvider],
+        a2ui_catalog: Union[catalog.A2uiCatalog, A2uiCatalogProvider],
         a2ui_examples: Union[str, A2uiExamplesProvider],
     ):
       self._a2ui_catalog = a2ui_catalog
@@ -205,13 +218,12 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
       super().__init__(
           name=self.TOOL_NAME,
           description=(
-              "Sends A2UI JSON to the client to render rich UI for the user."
-              " This tool can be called multiple times in the same call to"
-              " render multiple UI surfaces.Args:   "
-              f" {self.A2UI_JSON_ARG_NAME}: Valid A2UI JSON Schema to send to"
-              " the client. The A2UI JSON Schema definition is between"
-              f" {A2UI_SCHEMA_BLOCK_START} and {A2UI_SCHEMA_BLOCK_END} in"
-              " the system instructions."
+              "Sends A2UI JSON to the client to render rich UI for the user. This tool"
+              " can be called multiple times in the same call to render multiple UI"
+              f" surfaces.Args:    {self.A2UI_JSON_ARG_NAME}: Valid A2UI JSON Schema to"
+              " send to the client. The A2UI JSON Schema definition is between"
+              f" {constants.A2UI_SCHEMA_BLOCK_START} and"
+              f" {constants.A2UI_SCHEMA_BLOCK_END} in the system instructions."
           ),
       )
 
@@ -231,11 +243,13 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
           ),
       )
 
-    async def _resolve_a2ui_examples(self, ctx: ReadonlyContext) -> str:
+    async def _resolve_a2ui_examples(
+        self, ctx: readonly_context.ReadonlyContext
+    ) -> str:
       """The resolved self.a2ui_examples field to construct instruction for this agent.
 
       Args:
-          ctx: The ReadonlyContext to resolve the provider with.
+          ctx: The readonly_context.ReadonlyContext to resolve the provider with.
 
       Returns:
           The A2UI examples string.
@@ -248,16 +262,18 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
           a2ui_examples = await a2ui_examples
         return a2ui_examples
 
-    async def _resolve_a2ui_catalog(self, ctx: ReadonlyContext) -> A2uiCatalog:
+    async def _resolve_a2ui_catalog(
+        self, ctx: readonly_context.ReadonlyContext
+    ) -> catalog.A2uiCatalog:
       """The resolved self.a2ui_catalog field to construct instruction for this agent.
 
       Args:
-          ctx: The ReadonlyContext to resolve the provider with.
+          ctx: The readonly_context.ReadonlyContext to resolve the provider with.
 
       Returns:
           The A2UI catalog object.
       """
-      if isinstance(self._a2ui_catalog, A2uiCatalog):
+      if isinstance(self._a2ui_catalog, catalog.A2uiCatalog):
         return self._a2ui_catalog
       else:
         a2ui_catalog = self._a2ui_catalog(ctx)
@@ -266,7 +282,10 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
         return a2ui_catalog
 
     async def process_llm_request(
-        self, *, tool_context: ToolContext, llm_request: LlmRequest
+        self,
+        *,
+        tool_context: tool_context.ToolContext,
+        llm_request: models.LlmRequest,
     ) -> None:
       await super().process_llm_request(
           tool_context=tool_context, llm_request=llm_request
@@ -282,7 +301,7 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
       logger.info("Added A2UI schema and examples to system instructions")
 
     async def run_async(
-        self, *, args: dict[str, Any], tool_context: ToolContext
+        self, *, args: dict[str, Any], tool_context: tool_context.ToolContext
     ) -> Any:
       try:
         a2ui_json = args.get(self.A2UI_JSON_ARG_NAME)
