@@ -14,16 +14,11 @@
  limitations under the License.
  */
 
-import { BoundProperty } from '@a2ui/angular';
+import {BoundProperty} from '@a2ui/angular';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Types from '@a2ui/web_core/types/types';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-} from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core';
+import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 
 @Component({
   selector: 'a2ui-youtube',
@@ -99,17 +94,17 @@ export class YouTube {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-  protected readonly resolvedVideoId = computed(() =>
-    this.props()['videoId']?.value() as string | null
+  protected readonly resolvedVideoId = computed(
+    () => this.props()['videoId']?.value() as string | null,
   );
 
   readonly title = input<Primitives.StringValue | null>();
-  protected readonly resolvedTitle = computed(() =>
-    this.props()['title']?.value() as string | null
+  protected readonly resolvedTitle = computed(
+    () => this.props()['title']?.value() as string | null,
   );
 
-  protected readonly resolvedAutoplay = computed(() =>
-    this.props()['autoplay']?.value() as boolean | null
+  protected readonly resolvedAutoplay = computed(
+    () => this.props()['autoplay']?.value() as boolean | null,
   );
 
   private static readonly YOUTUBE_ID_REGEX = /^[a-zA-Z0-9_-]{11}$/;
@@ -129,6 +124,5 @@ export class YouTube {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   });
 
-  constructor(private sanitizer: DomSanitizer) {
-  }
+  constructor(private sanitizer: DomSanitizer) {}
 }

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+<<<<<<< HEAD
 import { Part } from '@a2a-js/sdk';
 import {
   A2uiMessage,
@@ -23,6 +24,11 @@ import {
   DeleteSurfaceMessage,
 } from '@a2ui/web_core/v0_9';
 import { isA2aDataPart } from './type-guards';
+=======
+import {Part} from '@a2a-js/sdk';
+import * as Types from '@a2ui/web_core/types/types';
+import {isA2aDataPart} from './type-guards';
+>>>>>>> 9526ab2e (Enforce formatting in repo (#1338))
 
 /**
  * Extracts A2UI messages from an array of A2A Parts.

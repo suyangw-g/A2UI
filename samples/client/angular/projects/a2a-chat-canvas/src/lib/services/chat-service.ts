@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+<<<<<<< HEAD
 import { AgentCard, SendMessageSuccessResponse } from '@a2a-js/sdk';
 import { PART_RESOLVERS } from '@a2a_chat_canvas/a2a-renderer/tokens';
 import { A2A_SERVICE } from '@a2a_chat_canvas/interfaces/a2a-service';
@@ -25,6 +26,18 @@ import { A2uiClientAction } from '@a2ui/web_core/v0_9';
 import { A2uiRendererService } from '@a2ui/angular';
 import { inject, Injectable, resource, signal } from '@angular/core';
 import { v4 as uuid } from 'uuid';
+=======
+import {AgentCard, SendMessageSuccessResponse} from '@a2a-js/sdk';
+import {PART_RESOLVERS} from '@a2a_chat_canvas/a2a-renderer/tokens';
+import {A2A_SERVICE} from '@a2a_chat_canvas/interfaces/a2a-service';
+import {UiAgent, UiMessage, UiMessageContent} from '@a2a_chat_canvas/types/ui-message';
+import {extractA2aPartsFromResponse} from '@a2a_chat_canvas/utils/a2a';
+import {extractA2uiDataParts} from '@a2a_chat_canvas/utils/a2ui';
+import {convertPartToUiMessageContent} from '@a2a_chat_canvas/utils/ui-message-utils';
+import {MessageProcessor, DispatchedEvent} from '@a2ui/angular';
+import {inject, Injectable, resource, signal} from '@angular/core';
+import {v4 as uuid} from 'uuid';
+>>>>>>> 9526ab2e (Enforce formatting in repo (#1338))
 
 /**
  * Service responsible for managing chat interactions, including sending messages,
@@ -101,7 +114,7 @@ export class ChatService {
     try {
       this.abortController = new AbortController();
       const a2aResponse = await this.a2aService.sendMessage(
-        [{ kind: 'text', text }],
+        [{kind: 'text', text}],
         this.abortController.signal,
       );
       this.handleSuccess(a2aResponse, silent);
@@ -133,7 +146,7 @@ export class ChatService {
     const now = new Date().toISOString();
     const userMessage = this.createNewUserMessage(text, now);
     const agentMessage = this.createPendingAgentMessage(now);
-    this.history.update((curr) => [...curr, userMessage, agentMessage]);
+    this.history.update(curr => [...curr, userMessage, agentMessage]);
   }
 
   /**
@@ -149,7 +162,7 @@ export class ChatService {
     );
 
     if (!silent) {
-      this.updateLastMessage((msg) => ({
+      this.updateLastMessage(msg => ({
         ...msg,
         role: this.createRole(response),
         contents: [...msg.contents, ...newContents],
@@ -190,7 +203,7 @@ export class ChatService {
       variant: 'default_text_part',
     };
 
-    this.updateLastMessage((msg) => ({
+    this.updateLastMessage(msg => ({
       ...msg,
       contents: [...msg.contents, errorContent],
       status: 'completed',
@@ -205,7 +218,7 @@ export class ChatService {
    * @param updater A function that takes the current last message and returns the updated message.
    */
   private updateLastMessage(updater: (msg: UiMessage) => UiMessage) {
-    this.history.update((history) => {
+    this.history.update(history => {
       if (history.length === 0) return history;
       // New reference of the same object for OnPush ChangeDetectionStrategy.
       const lastMessage = history[history.length - 1];

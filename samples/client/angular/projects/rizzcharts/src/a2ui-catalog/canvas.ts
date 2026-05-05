@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
+<<<<<<< HEAD
 import { BoundProperty } from '@a2ui/angular';
 import * as Types from '@a2ui/web_core/types/types';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, input } from '@angular/core';
 import { CanvasService } from '@a2a_chat_canvas/services/canvas-service';
+=======
+import {DynamicComponent} from '@a2ui/angular';
+import * as Types from '@a2ui/web_core/types/types';
+import {ChangeDetectionStrategy, Component, computed, inject, OnInit} from '@angular/core';
+import {CanvasService} from '@a2a_chat_canvas/services/canvas-service';
+>>>>>>> 9526ab2e (Enforce formatting in repo (#1338))
 
 @Component({
   selector: 'a2ui-canvas',

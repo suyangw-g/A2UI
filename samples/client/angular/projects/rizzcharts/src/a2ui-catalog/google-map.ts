@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
+<<<<<<< HEAD
 import { BoundProperty } from '@a2ui/angular';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+=======
+import {DynamicComponent} from '@a2ui/angular';
+import * as Primitives from '@a2ui/web_core/types/primitives';
+import * as Types from '@a2ui/web_core/types/types';
+import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core';
+import {GoogleMapsModule} from '@angular/google-maps';
+import {MatIconButton} from '@angular/material/button';
+import {MatIcon} from '@angular/material/icon';
+>>>>>>> 9526ab2e (Enforce formatting in repo (#1338))
 
 // --- Location Definitions ---
 interface Pin {
@@ -111,7 +121,7 @@ interface Pin {
             [zoom]="resolvedZoom"
             height="500px"
             width="100%"
-            [options]="{ mapId: mapId }"
+            [options]="{mapId: mapId}"
           >
             @for (pin of resolvedPins(); track pin) {
               <map-advanced-marker
@@ -186,5 +196,65 @@ export class GoogleMap {
       }
     }
     return locations;
+<<<<<<< HEAD
   });
+=======
+  }
+
+  private resolveLocation(value: string | null): Pin | null {
+    if (!value) {
+      return null;
+    }
+
+    const latValue: Primitives.NumberValue = {path: `${value}.lat`};
+    const lngValue: Primitives.NumberValue = {path: `${value}.lng`};
+    const nameValue: Primitives.StringValue = {path: `${value}.name`};
+    const descriptionValue: Primitives.StringValue = {path: `${value}.description`};
+    const backgroundValue: Primitives.StringValue = {path: `${value}.background`};
+    const borderColorValue: Primitives.StringValue = {path: `${value}.borderColor`};
+    const glyphColorValue: Primitives.StringValue = {path: `${value}.glyphColor`};
+
+    const lat = this.resolvePrimitive(latValue);
+    const lng = this.resolvePrimitive(lngValue);
+    const name = this.resolvePrimitive(nameValue);
+    const description = this.resolvePrimitive(descriptionValue);
+    const background = this.resolvePrimitive(backgroundValue);
+    const borderColor = this.resolvePrimitive(borderColorValue);
+    const glyphColor = this.resolvePrimitive(glyphColorValue);
+
+    // TODO: This logic should be implemented in the `guard.ts` by making the data model typed upstream.
+    if (lat === null || lng === null || name === null) {
+      // The location is invalid.
+      return null;
+    }
+
+    return {
+      lat,
+      lng,
+      name,
+      // TODO: Description is currently not used in the Maps.
+      description,
+      pinElement: new google.maps.marker.PinElement({
+        background,
+        borderColor,
+        glyphColor,
+      }),
+    };
+  }
+
+  private resolveLatLng(value: CustomProperties | null): google.maps.LatLngLiteral {
+    if (value?.path) {
+      const latValue: Primitives.NumberValue = {path: `${value.path}.lat`};
+      const lngValue: Primitives.NumberValue = {path: `${value.path}.lng`};
+      const lat = this.resolvePrimitive(latValue)!;
+      const lng = this.resolvePrimitive(lngValue)!;
+      return {
+        lat,
+        lng,
+      };
+    }
+
+    return this.defaultCenter;
+  }
+>>>>>>> 9526ab2e (Enforce formatting in repo (#1338))
 }

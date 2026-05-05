@@ -24,7 +24,7 @@ import {
   RENDERERS,
 } from '@a2a_chat_canvas/a2a-renderer/tokens';
 import { ArtifactResolver, PartResolver, RendererEntry } from '@a2a_chat_canvas/a2a-renderer/types';
-import { A2A_SERVICE, A2aService } from '@a2a_chat_canvas/interfaces/a2a-service';
+import {A2A_SERVICE, A2aService} from '@a2a_chat_canvas/interfaces/a2a-service';
 import {
   MARKDOWN_RENDERER_SERVICE,
   MarkdownRendererService,
@@ -32,7 +32,7 @@ import {
 import { SanitizerMarkdownRendererService } from '@a2a_chat_canvas/services/sanitizer-markdown-renderer-service';
 import { EnvironmentProviders, Provider, Type, makeEnvironmentProviders } from '@angular/core';
 import { A2UI_RENDERER_CONFIG, A2uiRendererService, BasicCatalog } from '@a2ui/angular';
-import { A2A_CHAT_CANVAS_CATALOG } from './a2ui-catalog/a2a-chat-canvas-catalog';
+import {A2A_CHAT_CANVAS_CATALOG} from './a2ui-catalog/a2a-chat-canvas-catalog';
 
 const DEFAULT_RENDERERS: readonly RendererEntry[] = [
   A2UI_DATA_PART_RENDERER_ENTRY,
@@ -64,7 +64,7 @@ export function configureChatCanvasFeatures(
       defaultPartResolversFeature,
       defaultRenderersFeature,
       ...additionalFeatures,
-    ].map((feature) => feature.providers),
+    ].map(feature => feature.providers),
   ]);
 }
 
@@ -74,7 +74,7 @@ export function configureChatCanvasFeatures(
 export function usingA2aService<T extends A2aService>(a2aServiceClass: Type<T>): A2aFeature {
   return {
     kind: ChatCanvasFeatureKind.A2A_FEATURE,
-    providers: [{ provide: A2A_SERVICE, useClass: a2aServiceClass }],
+    providers: [{provide: A2A_SERVICE, useClass: a2aServiceClass}],
   };
 }
 
@@ -86,7 +86,7 @@ export function usingMarkdownRenderer<T extends MarkdownRendererService>(
 ): MarkdownFeature {
   return {
     kind: ChatCanvasFeatureKind.MARKDOWN_FEATURE,
-    providers: [{ provide: MARKDOWN_RENDERER_SERVICE, useClass: markdownRendererClass }],
+    providers: [{provide: MARKDOWN_RENDERER_SERVICE, useClass: markdownRendererClass}],
   };
 }
 
@@ -105,7 +105,7 @@ export function usingPartResolvers(...partResolvers: readonly PartResolver[]): P
   return {
     kind: ChatCanvasFeatureKind.PART_RESOLVER_FEATURE,
     providers: [
-      partResolvers.map((resolver) => ({
+      partResolvers.map(resolver => ({
         provide: PART_RESOLVERS,
         useValue: resolver,
         multi: true,
@@ -123,7 +123,7 @@ export function usingArtifactResolvers(
   return {
     kind: ChatCanvasFeatureKind.ARTIFACT_RESOLVER_FEATURE,
     providers: [
-      artifactResolvers.map((resolver) => ({
+      artifactResolvers.map(resolver => ({
         provide: ARTIFACT_RESOLVERS,
         useValue: resolver,
         multi: true,
@@ -139,7 +139,7 @@ export function usingRenderers(...renderers: readonly RendererEntry[]): Renderer
   return {
     kind: ChatCanvasFeatureKind.RENDERER_FEATURE,
     providers: [
-      renderers.map((renderer) => ({
+      renderers.map(renderer => ({
         provide: RENDERERS,
         useValue: renderer,
         multi: true,

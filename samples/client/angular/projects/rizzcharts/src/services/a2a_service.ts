@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { AgentCard, Part, SendMessageSuccessResponse } from '@a2a-js/sdk';
-import { A2aService as A2aServiceInterface } from '@a2a_chat_canvas/interfaces/a2a-service';
-import { Injectable } from '@angular/core';
-import { CatalogService } from './catalog_service';
+import {AgentCard, Part, SendMessageSuccessResponse} from '@a2a-js/sdk';
+import {A2aService as A2aServiceInterface} from '@a2a_chat_canvas/interfaces/a2a-service';
+import {Injectable} from '@angular/core';
+import {CatalogService} from './catalog_service';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class A2aService implements A2aServiceInterface {
   private contextId?: string;
 
@@ -44,14 +44,14 @@ export class A2aService implements A2aServiceInterface {
     });
 
     if (response.ok) {
-      const json = (await response.json()) as SendMessageSuccessResponse & { contextId?: string };
+      const json = (await response.json()) as SendMessageSuccessResponse & {contextId?: string};
       if (json.contextId || json.result?.contextId) {
         this.contextId = json.contextId || json.result?.contextId;
       }
       return json;
     }
 
-    const error = (await response.json()) as { error: string };
+    const error = (await response.json()) as {error: string};
     throw new Error(error.error);
   }
 

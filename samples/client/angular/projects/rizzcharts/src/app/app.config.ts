@@ -25,6 +25,7 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
+<<<<<<< HEAD
 import { provideRouter } from '@angular/router';
 import { RIZZ_CHARTS_CATALOG } from '@rizzcharts/a2ui-catalog/catalog';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
@@ -34,6 +35,19 @@ import { RizzchartsMarkdownRendererService } from '../services/markdown-renderer
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { routes } from './app.routes';
 import { provideMarkdownRenderer } from '@a2ui/angular';
+=======
+import {provideRouter} from '@angular/router';
+import {RIZZ_CHARTS_CATALOG} from '@rizzcharts/a2ui-catalog/catalog';
+import {provideCharts, withDefaultRegisterables} from 'ng2-charts';
+import {A2aService} from '../services/a2a_service';
+import {RizzchartsMarkdownRendererService} from '../services/markdown-renderer.service';
+import {theme} from './theme';
+
+import {provideClientHydration, withEventReplay} from '@angular/platform-browser';
+import {routes} from './app.routes';
+import {provideMarkdownRenderer} from '@a2ui/angular';
+import {renderMarkdown} from '@a2ui/markdown-it';
+>>>>>>> 9526ab2e (Enforce formatting in repo (#1338))
 
 export const appConfig: ApplicationConfig = {
   providers: [

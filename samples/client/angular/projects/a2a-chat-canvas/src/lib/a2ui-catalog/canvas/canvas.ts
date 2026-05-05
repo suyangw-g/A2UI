@@ -19,7 +19,7 @@ import { BoundProperty } from '@a2ui/angular';
 import * as Types from '@a2ui/web_core/types/types';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import {MatCard, MatCardContent} from '@angular/material/card';
 
 /**
  * A2UI custom component for a Canvas.

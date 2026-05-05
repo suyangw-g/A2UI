@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
+<<<<<<< HEAD
 import { BoundProperty } from '@a2ui/angular';
+=======
+import {DynamicComponent} from '@a2ui/angular';
+import * as Primitives from '@a2ui/web_core/types/primitives';
+import * as Types from '@a2ui/web_core/types/types';
+>>>>>>> 9526ab2e (Enforce formatting in repo (#1338))
 import {
   ChangeDetectionStrategy,
   Component,
@@ -24,10 +30,10 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { ChartData, ChartEvent, ChartOptions, ChartType, LegendItem } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
+import {MatIconButton} from '@angular/material/button';
+import {MatIcon} from '@angular/material/icon';
+import {ChartData, ChartEvent, ChartOptions, ChartType, LegendItem} from 'chart.js';
+import {BaseChartDirective} from 'ng2-charts';
 
 @Component({
   selector: 'a2ui-chart',
@@ -153,7 +159,7 @@ export class Chart {
       if (!allData) {
         return undefined;
       }
-      return { ...allData.get(selectedCategory) } as ChartData<'pie', number[], string>;
+      return {...allData.get(selectedCategory)} as ChartData<'pie', number[], string>;
     },
   );
 
@@ -194,6 +200,21 @@ export class Chart {
     const dataMap = new Map<string, ChartData<'pie', number[], string>>();
     const labels: string[] = [];
     const data: number[] = [];
+<<<<<<< HEAD
+=======
+    if (pathPrefix?.path) {
+      for (let index: number = 0; index < 500; index++) {
+        const itemPrefix = `${pathPrefix.path}[${index}]`;
+        const labelPath: Primitives.StringValue = {path: `${itemPrefix}.label`};
+        const valuePath: Primitives.NumberValue = {path: `${itemPrefix}.value`};
+        const label = super.resolvePrimitive(labelPath);
+        const value = super.resolvePrimitive(valuePath);
+        if (label === null || value === null) {
+          break;
+        }
+        labels.push(label);
+        data.push(value);
+>>>>>>> 9526ab2e (Enforce formatting in repo (#1338))
 
     for (const item of dataArray) {
       const label = item.label;
@@ -246,7 +267,7 @@ export class Chart {
     this.selectedCategory.set('root');
   }
 
-  protected onClick(e: { event?: ChartEvent; active?: any[] | undefined }) {
+  protected onClick(e: {event?: ChartEvent; active?: any[] | undefined}) {
     const active = e.active;
     if (!active || active.length === 0) return;
 

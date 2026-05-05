@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { BASIC_COMPONENTS, AngularCatalog, AngularComponentImplementation } from '@a2ui/angular';
-import { z } from 'zod';
-import { Chart } from './chart';
-import { GoogleMap } from './google-map';
+import {BASIC_COMPONENTS, AngularCatalog, AngularComponentImplementation} from '@a2ui/angular';
+import {z} from 'zod';
+import {Chart} from './chart';
+import {GoogleMap} from './google-map';
 
 const customComponents: AngularComponentImplementation[] = [
-  { name: 'Chart', schema: z.object({}), component: Chart },
-  { name: 'GoogleMap', schema: z.object({}), component: GoogleMap },
+  {name: 'Chart', schema: z.object({}), component: Chart},
+  {name: 'GoogleMap', schema: z.object({}), component: GoogleMap},
 ];
 
 /**
