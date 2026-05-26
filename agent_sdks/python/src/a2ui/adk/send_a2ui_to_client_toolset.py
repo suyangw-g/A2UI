@@ -88,19 +88,9 @@ from typing import (
     Union,
 )
 
-import jsonschema
-
-from a2a import types as a2a_types
-from a2ui.a2a import parts
-from a2ui.parser.parser import has_a2ui_parts
 from a2ui.adk.a2a.event_converter import A2uiEventConverter
 from a2ui.adk.a2a.part_converter import A2uiPartConverter
 from a2ui.parser.payload_fixer import parse_and_fix
-from a2ui.schema import catalog
-from a2ui.schema import constants
-from google.adk import models
-from google.adk.a2a.converters import part_converter
-from google.adk.agents import readonly_context
 from a2ui.schema.catalog import A2uiCatalog
 from a2ui.schema.constants import (
     A2UI_SCHEMA_BLOCK_END,
@@ -202,7 +192,7 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
     catalog = await self._ui_tools[0]._resolve_a2ui_catalog(ctx)
     return A2uiPartConverter(catalog)
 
-  class _SendA2uiJsonToClientTool(base_tool.BaseTool):
+  class _SendA2uiJsonToClientTool(BaseTool):
     TOOL_NAME = A2UI_TOOL_NAME
     VALIDATED_A2UI_JSON_KEY = A2UI_VALIDATED_JSON_KEY
     A2UI_JSON_ARG_NAME = "a2ui_json"
