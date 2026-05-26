@@ -31,7 +31,7 @@ import {MatCard, MatCardContent} from '@angular/material/card';
   templateUrl: './canvas.html',
   styleUrl: './canvas.scss',
   imports: [MatButton, MatCard, MatCardContent],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Canvas implements OnInit {
   /** Reactive properties resolved from the A2UI ComponentModel. */

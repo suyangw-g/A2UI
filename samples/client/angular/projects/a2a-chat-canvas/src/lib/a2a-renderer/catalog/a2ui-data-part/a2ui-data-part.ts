@@ -41,8 +41,13 @@ import {ChangeDetectionStrategy, Component, computed, inject, input} from '@angu
   selector: 'a2ui-data-part',
   templateUrl: './a2ui-data-part.html',
   styleUrl: './a2ui-data-part.scss',
+<<<<<<< HEAD
   imports: [SurfaceComponent],
   changeDetection: ChangeDetectionStrategy.Eager,
+=======
+  imports: [Surface],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+>>>>>>> 0e037574 (Fix test imports, add !, and restore OnPush change detection (#1481))
 })
 export class A2uiDataPart implements RendererComponent {
   /** The UiMessageContent containing the A2A data part with the embedded A2UI message. */
